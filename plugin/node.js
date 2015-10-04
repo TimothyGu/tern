@@ -2224,7 +2224,7 @@
         ok: {
           "!type": "fn(value: ?, message?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert",
-          "!doc": "This module is used for writing unit tests for your applications, you can access it with require('assert')."
+          "!doc": "Tests if value is truthy. It is equivalent to assert.equal(true, !!value, message)."
         },
         equal: {
           "!type": "fn(actual: ?, expected: ?, message?: string)",
@@ -2234,42 +2234,52 @@
         notEqual: {
           "!type": "fn(actual: ?, expected: ?, message?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_notequal_actual_expected_message",
-          "!doc": "Tests shallow, coercive non-equality with the not equal comparison operator ( != )."
+          "!doc": "Tests shallow, coercive inequality with the not equal comparison operator ( != )."
         },
         deepEqual: {
           "!type": "fn(actual: ?, expected: ?, message?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_deepequal_actual_expected_message",
-          "!doc": "Tests for deep equality."
+          "!doc": "Tests for deep equality. Primitive values are compared with the equal comparison operator ( == ). Doesn't take object prototypes into account."
         },
         notDeepEqual: {
           "!type": "fn(acutal: ?, expected: ?, message?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_notdeepequal_actual_expected_message",
-          "!doc": "Tests for any deep inequality."
+          "!doc": "Tests for any deep inequality. Opposite of assert.deepEqual."
         },
         strictEqual: {
           "!type": "fn(actual: ?, expected: ?, message?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_strictequal_actual_expected_message",
-          "!doc": "Tests strict equality, as determined by the strict equality operator ( === )"
+          "!doc": "Tests strict equality as determined by the strict equality operator ( === )."
         },
         notStrictEqual: {
           "!type": "fn(actual: ?, expected: ?, message?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_notstrictequal_actual_expected_message",
-          "!doc": "Tests strict non-equality, as determined by the strict not equal operator ( !== )"
+          "!doc": "Tests strict inequality as determined by the strict not equal operator ( !== )."
+        },
+        deepStrictEqual: {
+          "!type": "fn(actual: ?, expected: ?, message?: string)",
+          "!url": "https://nodejs.org/api/assert.html#assert_assert_deepstrictequal_actual_expected_message",
+          "!doc": "Tests for deep equality. Primitive values are compared with the strict equality operator ( === )."
+        },
+        notDeepStrictEqual: {
+          "!type": "fn(actual: ?, expected: ?, message?: string)",
+          "!url": "https://nodejs.org/api/assert.html#assert_assert_notdeepstrictequal_actual_expected_message",
+          "!doc": "Tests for deep inequality. Opposite of assert.deepStrictEqual."
         },
         "throws": {
           "!type": "fn(block: fn(), error?: ?, messsage?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_throws_block_error_message",
-          "!doc": "Expects block to throw an error. error can be constructor, regexp or validation function."
+          "!doc": "Expects block to throw an error. error can be a constructor, RegExp, or validation function."
         },
         doesNotThrow: {
           "!type": "fn(block: fn(), error?: ?, messsage?: string)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_doesnotthrow_block_message",
-          "!doc": "Expects block not to throw an error."
+          "!doc": "Expects block not to throw an error. See assert.throws() for details."
         },
         ifError: {
           "!type": "fn(value: ?)",
           "!url": "https://nodejs.org/api/assert.html#assert_assert_iferror_value",
-          "!doc": "Tests if value is not a false value, throws if it is a true value. Useful when testing the first argument, error in callbacks."
+          "!doc": "Throws value if value is truthy. This is useful when testing the error argument in callbacks."
         },
         "!url": "https://nodejs.org/api/assert.html#assert_assert",
         "!doc": "This module is used for writing unit tests for your applications, you can access it with require('assert')."
