@@ -461,12 +461,32 @@
       },
       cluster: {
         "!proto": "events.EventEmitter.prototype",
+        schedulingPolicy: {
+          "!type": "number",
+          "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_schedulingpolicy",
+          "!doc": "The scheduling policy, either cluster.SCHED_RR for round-robin or cluster.SCHED_NONE to leave it to the operating system. This is a global setting and effectively frozen once you spawn the first worker or call cluster.setupMaster(), whatever comes first."
+        },
+        SCHED_RR: "number",
+        SCHED_NONE: "number",
         settings: {
+          execArgv: "[string]",
           exec: "string",
           args: "[string]",
           silent: "bool",
+          uid: "number",
+          gid: "number",
           "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_settings",
-          "!doc": "All settings set by the .setupMaster is stored in this settings object. This object is not supposed to be changed or set manually, by you."
+          "!doc": "After calling .setupMaster() (or .fork()) this settings object will contain the settings, including the default values. This object is not supposed to be changed or set manually, by you."
+        },
+        isMaster: {
+          "!type": "bool",
+          "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_ismaster",
+          "!doc": "True if the process is a master. This is determined by the process.env.NODE_UNIQUE_ID. If process.env.NODE_UNIQUE_ID is undefined, then isMaster is true."
+        },
+        isWorker: {
+          "!type": "bool",
+          "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_isworker",
+          "!doc": "True if the process is not a master (it is the negation of cluster.isMaster)."
         },
         Worker: {
           "!type": "fn()",
@@ -480,47 +500,51 @@
             process: {
               "!type": "+child_process.ChildProcess",
               "!url": "https://nodejs.org/api/cluster.html#cluster_worker_process",
-              "!doc": "All workers are created using child_process.fork(), the returned object from this function is stored in process."
+              "!doc": "All workers are created using child_process.fork(), the returned object from this function is stored as .process. In a worker, the global process is stored."
             },
             suicide: {
               "!type": "bool",
               "!url": "https://nodejs.org/api/cluster.html#cluster_worker_suicide",
-              "!doc": "This property is a boolean. It is set when a worker dies after calling .kill() or immediately after calling the .disconnect() method. Until then it is undefined."
+              "!doc": "Set by calling .kill() or .disconnect(), until then it is undefined."
             },
             send: {
-              "!type": "fn(message: ?, sendHandle?: ?)",
+              "!type": "fn(message: ?, sendHandle?: ?, callback?: fn())",
               "!url": "https://nodejs.org/api/cluster.html#cluster_worker_send_message_sendhandle",
-              "!doc": "This function is equal to the send methods provided by child_process.fork(). In the master you should use this function to send a message to a specific worker. However in a worker you can also use process.send(message), since this is the same function."
-            },
-            destroy: "fn()",
-            disconnect: {
-              "!type": "fn()",
-              "!url": "https://nodejs.org/api/cluster.html#cluster_worker_disconnect",
-              "!doc": "When calling this function the worker will no longer accept new connections, but they will be handled by any other listening worker. Existing connection will be allowed to exit as usual. When no more connections exist, the IPC channel to the worker will close allowing it to die graceful. When the IPC channel is closed the disconnect event will emit, this is then followed by the exit event, there is emitted when the worker finally die."
+              "!doc": "Send a message to a worker or master, optionally with a handle. In the master this sends a message to a specific worker. It is identical to ChildProcess.send(). In a worker this sends a message to the master. It is identical to process.send()."
             },
             kill: {
               "!type": "fn(signal?: string)",
               "!url": "https://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm",
-              "!doc": "This function will kill the worker, and inform the master to not spawn a new worker. The boolean suicide lets you distinguish between voluntary and accidental exit."
+              "!doc": "This function will kill the worker. In the master, it does this by disconnecting the worker.process, and once disconnected, killing with signal. In the worker, it does it by disconnecting the channel, and then exiting with code 0. Causes .suicide to be set."
+            },
+            destroy: {
+              "!type": "fn(signal?: string)",
+              "!url": "https://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm",
+              "!doc": "An alias of worker.kill."
+            },
+            disconnect: {
+              "!type": "fn()",
+              "!url": "https://nodejs.org/api/cluster.html#cluster_worker_disconnect",
+              "!doc": "In a worker, this function will close all servers, wait for the 'close' event on those servers, and then disconnect the IPC channel. In the master, an internal message is sent to the worker causing it to call .disconnect() on itself. Causes .suicide to be set."
+            },
+            isDead: {
+              "!type": "fn() -> bool",
+              "!url": "https://nodejs.org/api/cluster.html#cluster_worker_isdead",
+              "!doc": "This function returns true if the worker's process has terminated (either because of exiting or being signaled). Otherwise, it returns false."
+            },
+            isConnected: {
+              "!type": "fn() -> bool",
+              "!url": "https://nodejs.org/api/cluster.html#cluster_worker_isconnected",
+              "!doc": "This function returns true if the worker is connected to its master via its IPC channel, false otherwise. A worker is connected to its master after it's been created. It is disconnected after the disconnect event is emitted."
             }
           },
           "!url": "https://nodejs.org/api/cluster.html#cluster_class_worker",
           "!doc": "A Worker object contains all public information and method about a worker. In the master it can be obtained using cluster.workers. In a worker it can be obtained using cluster.worker."
         },
-        isMaster: {
-          "!type": "bool",
-          "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_ismaster",
-          "!doc": "True if the process is a master. This is determined by the process.env.NODE_UNIQUE_ID. If process.env.NODE_UNIQUE_ID is undefined, then isMaster is true."
-        },
-        isWorker: {
-          "!type": "bool",
-          "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_isworker",
-          "!doc": "This boolean flag is true if the process is a worker forked from a master. If the process.env.NODE_UNIQUE_ID is set to a value, then isWorker is true."
-        },
         setupMaster: {
           "!type": "fn(settings?: cluster.settings)",
           "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_setupmaster_settings",
-          "!doc": "setupMaster is used to change the default 'fork' behavior. The new settings are effective immediately and permanently, they cannot be changed later on."
+          "!doc": "setupMaster is used to change the default 'fork' behavior. Once called, the settings will be present in cluster.settings."
         },
         fork: {
           "!type": "fn(env?: ?) -> +cluster.Worker",
@@ -530,7 +554,7 @@
         disconnect: {
           "!type": "fn(callback?: fn())",
           "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_disconnect_callback",
-          "!doc": "When calling this method, all workers will commit a graceful suicide. When they are disconnected all internal handlers will be closed, allowing the master process to die graceful if no other event is waiting."
+          "!doc": "Calls .disconnect() on each worker in cluster.workers. When they are disconnected all internal handles will be closed, allowing the master process to die gracefully if no other event is waiting."
         },
         worker: {
           "!type": "+cluster.Worker",
@@ -538,12 +562,12 @@
           "!doc": "A reference to the current worker object. Not available in the master process."
         },
         workers: {
-          "!type": "[+cluster.Worker]",
+          "!type": "?",
           "!url": "https://nodejs.org/api/cluster.html#cluster_cluster_workers",
           "!doc": "A hash that stores the active worker objects, keyed by id field. Makes it easy to loop through all the workers. It is only available in the master process."
         },
         "!url": "https://nodejs.org/api/cluster.html#cluster_cluster",
-        "!doc": "A single instance of Node runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node processes to handle the load."
+        "!doc": "A single instance of Node.js runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node.js processes to handle the load."
       },
       zlib: {
         "!url": "https://nodejs.org/api/zlib.html",
