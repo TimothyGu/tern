@@ -1639,6 +1639,36 @@
           "!url": "https://nodejs.org/api/fs.html#fs_fs_existssync_path",
           "!doc": "Synchronous version of fs.exists."
         },
+        access: {
+          "!type": "fn(path: string, mode?: number, callback?: fn(err?: +Error))",
+          //"!url": "https://nodejs.org/api/fs.html#fs_fs_access_path_mode_callback",
+          "!doc": "Tests a user's permissions for the file specified by path. mode is an optional integer that specifies the accessibility checks to be performed, which can be fs.F_OK, fs.R_OK, fs.W_OK, or fs.X_OK, or any mask consisting of the bitwise OR of two or more values."
+        },
+        accessSync: {
+          "!type": "fn(path: string, mode?: number)",
+          "!url": "https://nodejs.org/api/fs.html#fs_fs_accesssync_path_mode",
+          "!doc": "Synchronous version of fs.access. This throws if any accessibility checks fail, and does nothing otherwise."
+        },
+        F_OK: {
+          "!type": "number",
+          "!url": "https://nodejs.org/api/fs.html#fs_fs_access_path_mode_callback",
+          "!doc": "File is visible to the calling process. This is useful for determining if a file exists, but says nothing about rwx permissions. Default if no mode is specified."
+        },
+        R_OK: {
+          "!type": "number",
+          "!url": "https://nodejs.org/api/fs.html#fs_fs_access_path_mode_callback",
+          "!doc": "File can be read by the calling process."
+        },
+        W_OK: {
+          "!type": "number",
+          "!url": "https://nodejs.org/api/fs.html#fs_fs_access_path_mode_callback",
+          "!doc": "File can be written by the calling process."
+        },
+        X_OK: {
+          "!type": "number",
+          "!url": "https://nodejs.org/api/fs.html#fs_fs_access_path_mode_callback",
+          "!doc": "File can be executed by the calling process. This has no effect on Windows (will behave like fs.F_OK)."
+        },
         Stats: {
           "!type": "fn()",
           prototype: {
