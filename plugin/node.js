@@ -954,10 +954,20 @@
               "!url": "https://nodejs.org/api/child_process.html#child_process_child_stderr",
               "!doc": "A Readable Stream that represents the child process's stderr."
             },
+            stdio: {
+              "!type": "[?]",
+              "!url": "https://nodejs.org/api/child_process.html#child_process_child_stdio",
+              "!doc": "A sparse array of pipes to the child process, corresponding with positions in the stdio option to spawn that have been set to 'pipe'. Note that streams 0-2 are also available as ChildProcess.stdin, ChildProcess.stdout, and ChildProcess.stderr, respectively."
+            },
             pid: {
               "!type": "number",
               "!url": "https://nodejs.org/api/child_process.html#child_process_child_pid",
               "!doc": "The PID of the child process."
+            },
+            connected: {
+              "!type": "bool",
+              "!url": "https://nodejs.org/api/child_process.html#child_process_child_connected",
+              "!doc": "If .connected is false, it is no longer possible to send messages."
             },
             kill: {
               "!type": "fn(signal?: string)",
@@ -965,7 +975,7 @@
               "!doc": "Send a signal to the child process. If no argument is given, the process will be sent 'SIGTERM'."
             },
             send: {
-              "!type": "fn(message: ?, sendHandle?: ?)",
+              "!type": "fn(message: ?, sendHandle?: ?, callback?: ?)",
               "!url": "https://nodejs.org/api/child_process.html#child_process_child_send_message_sendhandle",
               "!doc": "When using child_process.fork() you can write to the child using child.send(message, [sendHandle]) and messages are received by a 'message' event on the child."
             },
@@ -984,12 +994,12 @@
           "!doc": "Launches a new process with the given command, with command line arguments in args. If omitted, args defaults to an empty Array."
         },
         exec: {
-          "!type": "fn(command: string, callback: fn(error: ?, stdout: +Buffer, stderr: +Buffer)) -> +child_process.ChildProcess",
+          "!type": "fn(command: string, options?: ?, callback?: fn(error: ?, stdout: +Buffer, stderr: +Buffer)) -> +child_process.ChildProcess",
           "!url": "https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback",
           "!doc": "Runs a command in a shell and buffers the output."
         },
         execFile: {
-          "!type": "fn(file: string, args: [string], options: ?, callback: fn(error: ?, stdout: +Buffer, stderr: +Buffer)) -> +child_process.ChildProcess",
+          "!type": "fn(file: string, args?: [string], options?: ?, callback?: fn(error: ?, stdout: +Buffer, stderr: +Buffer)) -> +child_process.ChildProcess",
           "!url": "https://nodejs.org/api/child_process.html#child_process_child_process_execfile_file_args_options_callback",
           "!doc": "This is similar to child_process.exec() except it does not execute a subshell but rather the specified file directly. This makes it slightly leaner than child_process.exec. It has the same options."
         },
@@ -997,6 +1007,21 @@
           "!type": "fn(modulePath: string, args?: [string], options?: ?) -> +child_process.ChildProcess",
           "!url": "https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options",
           "!doc": "This is a special case of the spawn() functionality for spawning Node processes. In addition to having all the methods in a normal ChildProcess instance, the returned object has a communication channel built-in."
+        },
+        spawnSync: {
+          "!type": "fn(command: string, args?: [string], options?: ?) -> ?",
+          "!url": "https://nodejs.org/api/child_process.html#child_process_child_process_spawnsync_command_args_options",
+          "!doc": "Launches a new process with the given command, with command line arguments in args. If omitted, args defaults to an empty Array. spawnSync will not return until the child process has fully closed. When a timeout has been encountered and killSignal is sent, the method won't return until the process has completely exited. That is to say, if the process handles the SIGTERM signal and doesn't exit, your process will wait until the child process has exited."
+        },
+        execSync: {
+          "!type": "fn(command: string, options?: ?) -> +Buffer",
+          "!url": "https://nodejs.org/api/child_process.html#child_process_child_process_execsync_command_options",
+          "!doc": "execSync will not return until the child process has fully closed. When a timeout has been encountered and killSignal is sent, the method won't return until the process has completely exited. That is to say, if the process handles the SIGTERM signal and doesn't exit, your process will wait until the child process has exited."
+        },
+        execFileSync: {
+          "!type": "fn(file: string, args?: [string], options?: ?) -> +Buffer",
+          "!url": "https://nodejs.org/api/child_process.html#child_process_child_process_execfilesync_command_args_options",
+          "!doc": "execFileSync will not return until the child process has fully closed. When a timeout has been encountered and killSignal is sent, the method won't return until the process has completely exited. That is to say, if the process handles the SIGTERM signal and doesn't exit, your process will wait until the child process has exited."
         }
       },
       url: {
